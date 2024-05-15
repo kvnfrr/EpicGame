@@ -9,7 +9,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setTitle("Epic Game");
+		config.setTitle("Turn-Based Game");
+		config.setWindowedMode(1280, 720);
 		new Lwjgl3Application(new Game(), config);
 	}
 }
