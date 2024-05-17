@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Game extends ApplicationAdapter {
 
@@ -21,8 +22,8 @@ public class Game extends ApplicationAdapter {
 	private float deceleration = 200f;
 	private float rotationSpeed = 100f;
 	//simple movement variables, must be float because of batch
-	private float xAxis = 0f;
-	private float yAxis = 0f;
+	private float xAxis = 600f;
+	private float yAxis = 350f;
 
 	@Override
 	public void create () {
@@ -39,13 +40,13 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+		ScreenUtils.clear(0,0,0,1);	//sets background back to black after input, prevents after image
 
 		batch.begin();
 		batch.draw(player, xAxis, yAxis);
 		batch.end();
 
-		userInput();
-		//leaves after image atm, update image issue ig
+		userInput();	//handles player movement
 	}
 
 	@Override
@@ -55,16 +56,16 @@ public class Game extends ApplicationAdapter {
 
 	private void userInput() {
 		if(Gdx.input.isKeyPressed(Input.Keys.W)){
-			yAxis += 10;
+			yAxis += 7;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			xAxis -= 10;
+			xAxis -= 7;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)){
-			yAxis -= 10;
+			yAxis -= 7;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
-			xAxis += 10;
+			xAxis += 7;
 		}
 
 	}
