@@ -2,77 +2,72 @@ package com.epic.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Game extends ApplicationAdapter {
 
-	private Rectangle player;
-	private Texture playerImage;
-	private Texture tileImage;
-	private OrthographicCamera camera;
+	private Texture player;
 	private SpriteBatch batch;
+	private OrthographicCamera camera;
+	//test variables atm, nothing final or fully implemented
+	//wanted to make something with movement like Asteroids from Atari, seems a bit difficult but not unrealistic
+	//for now will implement simple movement rhough
+	private float acceleration = 200f;
+	private float maxSpeed = 400f;
+	private float deceleration = 200f;
+	private float rotationSpeed = 100f;
+	//simple movement variables, must be float because of batch
+	private float xAxis = 0f;
+	private float yAxis = 0f;
 
 	@Override
 	public void create () {
 
-		playerImage = new Texture("player-temp.png");
-		tileImage = new Texture("tile-temp.png");
+		//load images
+		player = new Texture("player.png");
 
+		//instance of sprite batch (used to make character a rectangle p much)
 		batch = new SpriteBatch();
 
-		player = new Rectangle();
-
-		//centers player at start, but the sprite and player object are not allighned correctly so its wack
-		//should make a method in future for centering player in tile
-		player.x = 16;
-		player.y = 5;
-
-		//rounded size of player-temp.png
-		player.width = 30;
-		player.height = 50;
-
-		//just copied it from GDX documentation, crashes without it
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
-
+		//player movement
+		userInput();
 	}
 
 	@Override
 	public void render () {
-		ScreenUtils.clear(0, 0, 0, 1);
 
-		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		tilePattern();
-		batch.draw(playerImage, player.x, player.y);
+		batch.draw(player, xAxis, yAxis);
 		batch.end();
 
-
+		userInput();
+		//leaves after image atm, update image issue ig
 	}
-	
+
 	@Override
-	public void dispose () {
-		batch.dispose();
-		playerImage.dispose();
+	public void dispose() {
+		super.dispose();
 	}
 
-	private void playerMovement(){
-
-		// :D
-
-	}
-	private void tilePattern() {
-		//should put variable for 64, but code was temporary from start
-		for(int xAxis = 0; xAxis < Gdx.graphics.getWidth(); xAxis += 64){
-			for(int yAxis = 0; yAxis < Gdx.graphics.getHeight(); yAxis += 64){
-				batch.draw(tileImage, xAxis, yAxis, 64, 64);
-			}
+	private void userInput() {
+		if(Gdx.input.isKeyPressed(Input.Keys.W)){
+			yAxis += 10;
 		}
+		if(Gdx.input.isKeyPressed(Input.Keys.A)){
+			xAxis -= 10;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.S)){
+			yAxis -= 10;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.D)){
+			xAxis += 10;
+		}
+
 	}
+
 
 }
