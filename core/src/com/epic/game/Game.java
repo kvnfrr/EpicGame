@@ -13,6 +13,7 @@ public class Game extends ApplicationAdapter {
 
 	private Texture player;
 	private SpriteBatch batch;
+	private ShapeRenderer wall;
 	private OrthographicCamera camera;
 	//test variables atm, nothing final or fully implemented
 	//wanted to make something with movement like Asteroids from Atari, seems a bit difficult but not unrealistic
@@ -34,26 +35,34 @@ public class Game extends ApplicationAdapter {
 		//instance of sprite batch (used to make character a rectangle p much)
 		batch = new SpriteBatch();
 
+		//create shapes
+		wall = new ShapeRenderer();
+
 	}
 
 	@Override
 	public void render () {
 		ScreenUtils.clear(0,0,0,1);	//sets background back to black after input, prevents after image
 
-		batch.begin();
-		// Reminder: creates player (player(image), xAxis, yAxis (for starting position), xOrigin, yOrigin (for centering rotation), xScale, yScale (for size), rotationAngle (value for direction to face), srcX, srY (no idea),
-		batch.draw(player, xAxis - player.getWidth() / 2, yAxis - player.getHeight() / 2, player.getWidth() / 2, player.getHeight() / 2, player.getWidth(), player.getHeight(), 1, 1, rotationAngle, 0, 0, player.getWidth(), player.getHeight(), false, false);		batch.end();
-
 		userInput();	//handles player movement
 
+		batch.begin();
+		// Reminder: creates player (player(image), xAxis, yAxis (for starting position), xOrigin, yOrigin (for centering rotation), xScale, yScale (for size), rotationAngle (value for direction to face), srcX, srY (no idea),
+		batch.draw(player, xAxis - player.getWidth() / 2, yAxis - player.getHeight() / 2, player.getWidth() / 2, player.getHeight() / 2, player.getWidth(), player.getHeight(), 1f, 1f, rotationAngle, 0, 0, player.getWidth(), player.getHeight(), false, false);
+		batch.end();
+
+		wall.begin(ShapeRenderer.ShapeType.Filled);
+		wall.rectLine(0, 0, 50, 50, 3);
+		wall.end();
+
+
 	}
-
-
 
 	@Override
 	public void dispose() {
 		player.dispose();
 		batch.dispose();
+		wall.dispose();
 	}
 
 	private void userInput() {
@@ -61,11 +70,11 @@ public class Game extends ApplicationAdapter {
 		float radianAngle = (float) Math.toRadians(rotationAngle);
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			xAxis += Math.cos(radianAngle) * 7;
-			yAxis += Math.sin(radianAngle) * 7;
+			xAxis += Math.cos(radianAngle) * 4.5;
+			yAxis += Math.sin(radianAngle) * 4.5;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			rotationAngle += 5;
+			rotationAngle += 4;
 			if (rotationAngle >= 360) {
 				rotationAngle -= 360;
 			}
@@ -75,10 +84,13 @@ public class Game extends ApplicationAdapter {
 
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			rotationAngle -= 5;
+			rotationAngle -= 4;
 			if (rotationAngle < 0) {
 				rotationAngle += 360;
 			}
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
+			Gdx.app.exit();
 		}
 	}
 }
