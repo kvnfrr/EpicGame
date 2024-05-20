@@ -12,19 +12,21 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Game extends ApplicationAdapter {
 
 	private Texture player;
+	private Texture projectilePlayer;
 	private SpriteBatch batch;
 	private ShapeRenderer wall;
 	private OrthographicCamera camera;
-	//test variables atm, nothing final or fully implemented
-	//wanted to make something with movement like Asteroids from Atari, seems a bit difficult but not unrealistic
-	//for now will implement simple movement rhough
-	private float acceleration = 200f;
-	private float maxSpeed = 400f;
-	private float deceleration = 200f;
-	//simple movement variables, must be float because of batch
-	private float xAxis = 600f;
+
+    private float xAxis = 600f;
 	private float yAxis = 350f;
     private float rotationAngle = 90f; // starting angle (90 degrees is north)
+	private float velocityX = 0f;
+	private float velocityY = 0f;
+
+	//screen size for border
+	private float screenWidth;
+	private float screenHeight;
+
 
 	@Override
 	public void create () {
@@ -38,6 +40,9 @@ public class Game extends ApplicationAdapter {
 		//create shapes
 		wall = new ShapeRenderer();
 
+		screenWidth = Gdx.graphics.getWidth();
+		screenHeight = Gdx.graphics.getHeight();
+
 	}
 
 	@Override
@@ -46,15 +51,44 @@ public class Game extends ApplicationAdapter {
 
 		userInput();	//handles player movement
 
+		// player pos
+		xAxis += velocityX * Gdx.graphics.getDeltaTime();
+		yAxis += velocityY * Gdx.graphics.getDeltaTime();
+
+		// reduce speed after w key momentum, value 0.9 and 1 are the difference between isnta stop and no friction
+		float friction = 0.99f;
+		velocityX *= friction;
+		velocityY *= friction;
+
+		//code for border
+		float halfWidth = player.getWidth() * 0.7f / 2;
+		float halfHeight = player.getHeight() * 0.7f / 2;
+
+		if (xAxis - halfWidth < 0) {
+			xAxis = halfWidth;
+			velocityX = 0;
+		}
+		if (xAxis + halfWidth > screenWidth) {
+			xAxis = screenWidth - halfWidth;
+			velocityX = 0;
+		}
+		if (yAxis - halfHeight < 0) {
+			yAxis = halfHeight;
+			velocityY = 0;
+		}
+		if (yAxis + halfHeight > screenHeight) {
+			yAxis = screenHeight - halfHeight;
+			velocityY = 0;
+		}
+
 		batch.begin();
 		// Reminder: creates player (player(image), xAxis, yAxis (for starting position), xOrigin, yOrigin (for centering rotation), xScale, yScale (for size), rotationAngle (value for direction to face), srcX, srY (no idea),
-		batch.draw(player, xAxis - player.getWidth() / 2, yAxis - player.getHeight() / 2, player.getWidth() / 2, player.getHeight() / 2, player.getWidth(), player.getHeight(), 1f, 1f, rotationAngle, 0, 0, player.getWidth(), player.getHeight(), false, false);
+		batch.draw(player, xAxis - player.getWidth() / 2, yAxis - player.getHeight() / 2, player.getWidth() / 2, player.getHeight() / 2, player.getWidth(), player.getHeight(), 0.7f, 0.7f, rotationAngle, 0, 0, player.getWidth(), player.getHeight(), false, false);
 		batch.end();
 
 		wall.begin(ShapeRenderer.ShapeType.Filled);
 		wall.rectLine(0, 0, 50, 50, 3);
 		wall.end();
-
 
 	}
 
@@ -68,23 +102,28 @@ public class Game extends ApplicationAdapter {
 	private void userInput() {
 		// Trig used for getting W to move forward based on position looking
 		float radianAngle = (float) Math.toRadians(rotationAngle);
+		// deltaTime used for momentum
+		float deltaTime = Gdx.graphics.getDeltaTime();
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			xAxis += Math.cos(radianAngle) * 4.5;
-			yAxis += Math.sin(radianAngle) * 4.5;
+            float acceleration = 600f;
+            velocityX += Math.cos(radianAngle) * acceleration * deltaTime;
+			velocityY += Math.sin(radianAngle) * acceleration * deltaTime;
+
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			rotationAngle += 4;
+			rotationAngle += 2;
 			if (rotationAngle >= 360) {
 				rotationAngle -= 360;
 			}
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			// Plan to add momentum and this would be like a brake button, if not just use W key code and convert + to - for reverse.
-
+			// 0.9 and 1 is the difference between nearly insta stop and very loose brakes, like friction
+			velocityX *= 0.97f;
+			velocityY *= 0.97f;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			rotationAngle -= 4;
+			rotationAngle -= 3;
 			if (rotationAngle < 0) {
 				rotationAngle += 360;
 			}
