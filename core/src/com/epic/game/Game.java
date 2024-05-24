@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,13 +20,13 @@ public class Game extends ApplicationAdapter {
 	private ShapeRenderer wall;
 	private OrthographicCamera camera;
 
-	private float xAxis = 600f;
-	private float yAxis = 350f;
+	private float xAxis = 2500f; //character start pos (X)
+	private float yAxis = 2500f; //character start pos (Y)
 	private float rotationAngle = 90f; // starting angle (90 degrees is north)
 	private float velocityX = 0f;
 	private float velocityY = 0f;
 	//screen size for border
-	private final float WORLD_WIDTH = 3000f, WORLD_HEIGHT = 3000f;
+	private final float WORLD_WIDTH = 5000f, WORLD_HEIGHT = 5000f;
 	//for tracking projectiles
 	private ArrayList<Projectile> projectiles;
 
@@ -103,11 +102,13 @@ public class Game extends ApplicationAdapter {
 			}
 		}
 
+		batch.setProjectionMatrix(camera.combined);
 		batch.begin();	//begin rendering images (where created objects should go)
 
 		// Reminder: creates player (player(image), xAxis, yAxis (for starting position), xOrigin, yOrigin (for centering rotation), xScale, yScale (for size), rotationAngle (value for direction to face), srcX, srY (no idea),
-		batch.draw(player, (Gdx.graphics.getWidth() / 2) - 100, (Gdx.graphics.getHeight()/2) - 50, player.getWidth() / 2, player.getHeight() / 2, player.getWidth(), player.getHeight(), 0.7f, 0.7f, rotationAngle, 0, 0, player.getWidth(), player.getHeight(), false, false);
-		// renders (draws) projectiles
+		batch.draw(player, xAxis - player.getWidth() / 2, yAxis - player.getHeight() / 2,
+				player.getWidth() / 2, player.getHeight() / 2, player.getWidth(), player.getHeight(),
+				0.7f, 0.7f, rotationAngle, 0, 0, player.getWidth(), player.getHeight(), false, false);		// renders (draws) projectiles
 		for (Projectile projectile : projectiles) {
 			projectile.render(batch);
 		}
@@ -160,8 +161,12 @@ public class Game extends ApplicationAdapter {
 			}
 		}
 		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+			float tipOffset = player.getHeight() * 0.35f; // Adjust based on sprite's height
+			float tipX = xAxis + (float) Math.cos(radianAngle) * tipOffset;
+			float tipY = yAxis + (float) Math.sin(radianAngle) * tipOffset;
+
 			// Shoot a projectile
-			Vector2 position = new Vector2(xAxis, yAxis);
+			Vector2 position = new Vector2(tipX, tipY);
 			Vector2 velocity = new Vector2((float) Math.cos(radianAngle) * 600, (float) Math.sin(radianAngle) * 600);
 			projectiles.add(new Projectile(projectilePlayer, position, velocity));
 		}
