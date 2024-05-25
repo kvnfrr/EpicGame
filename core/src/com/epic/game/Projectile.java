@@ -20,12 +20,12 @@ public class Projectile {
     }
 
     public void update(float deltaTime) {
-        position.x += velocity.x * Gdx.graphics.getDeltaTime() * 5;
-        position.y += velocity.y * Gdx.graphics.getDeltaTime() * 5;
+        position.x += velocity.x * Gdx.graphics.getDeltaTime() * 4.5f;
+        position.y += velocity.y * Gdx.graphics.getDeltaTime() * 4.5f;
     }
 
     public void render(SpriteBatch batch) {
-        float scale = 1.5f;
+        float scale = 1.8f;
         batch.draw(texture, position.x - (texture.getWidth() * scale) / 2, position.y - (texture.getHeight() * scale) / 2,
                 texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), scale, scale,
                 angle, 0, 0, texture.getWidth(), texture.getHeight(), false, false);

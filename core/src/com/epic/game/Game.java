@@ -20,8 +20,8 @@ public class Game extends ApplicationAdapter {
 	private ShapeRenderer wall;
 	private OrthographicCamera camera;
 
-	private float xAxis = 2500f; //character start pos (X)
-	private float yAxis = 2500f; //character start pos (Y)
+	private float xAxis = 500f; //character start pos (X)
+	private float yAxis = 500f; //character start pos (Y)
 	private float rotationAngle = 90f; // starting angle (90 degrees is north)
 	private float velocityX = 0f;
 	private float velocityY = 0f;
@@ -139,12 +139,12 @@ public class Game extends ApplicationAdapter {
 		// deltaTime used for momentum
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			float acceleration = 600f;
+			float acceleration = 700f;
 			velocityX += Math.cos(radianAngle) * acceleration * deltaTime;
 			velocityY += Math.sin(radianAngle) * acceleration * deltaTime;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			rotationAngle += 2;
+			rotationAngle += 3.5f;
 			if (rotationAngle >= 360) {
 				rotationAngle -= 360;
 			}
@@ -155,7 +155,7 @@ public class Game extends ApplicationAdapter {
 			velocityY *= 0.97f;
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			rotationAngle -= 3;
+			rotationAngle -= 3.5f;
 			if (rotationAngle < 0) {
 				rotationAngle += 360;
 			}
