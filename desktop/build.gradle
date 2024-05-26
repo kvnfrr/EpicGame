@@ -1,15 +1,35 @@
-sourceCompatibility = 1.8
-sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.main.resources.srcDirs = ["../assets"]
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'application'
+}
 
-project.ext.mainClassName = "com.epic.game.DesktopLauncher"
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/"]
+        }
+        resources {
+            srcDirs = ["../assets"]
+        }
+    }
+}
+
+application {
+    mainClass = "com.epic.game.DesktopLauncher"
+}
+
 project.ext.assetsDir = new File("../assets")
 
 import org.gradle.internal.os.OperatingSystem
 
-tasks.register('run', JavaExec) {
+tasks.named('run', JavaExec).configure {
     dependsOn classes
-    mainClass = project.mainClassName
+    mainClass = application.mainClass.get()
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
@@ -23,7 +43,7 @@ tasks.register('run', JavaExec) {
 
 tasks.register('debug', JavaExec) {
     dependsOn classes
-    mainClass = project.mainClassName
+    mainClass = application.mainClass.get()
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
@@ -32,9 +52,9 @@ tasks.register('debug', JavaExec) {
 }
 
 tasks.register('dist', Jar) {
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes 'Main-Class': project.mainClassName
+        attributes 'Main-Class': application.mainClass.get()
     }
     dependsOn configurations.runtimeClasspath
     from {
@@ -43,7 +63,12 @@ tasks.register('dist', Jar) {
     with jar
 }
 
+tasks.named('dist').configure {
+    dependsOn classes
+}
 
-dist.dependsOn classes
-
-eclipse.project.name = appName + "-desktop"
+eclipse {
+    project {
+        name = appName + "-desktop"
+    }
+}
