@@ -11,21 +11,28 @@ public class Projectile {
     private Vector2 position;
     private Vector2 velocity;
     private float angle;
+    private float scale;
+    private boolean isCharged;
 
     public Projectile(Texture texture, Vector2 position, Vector2 velocity) {
+        this(texture, position, velocity, 2f, false);
+    }
+
+    public Projectile(Texture texture, Vector2 position, Vector2 velocity, float scale, boolean isCharged) {
         this.texture = texture;
         this.position = new Vector2(position);
         this.velocity = new Vector2(velocity);
         this.angle = velocity.angleDeg();
+        this.scale = scale;
+        this.isCharged = isCharged;
     }
 
     public void update(float deltaTime) {
-        position.x += velocity.x * Gdx.graphics.getDeltaTime() * 5;
-        position.y += velocity.y * Gdx.graphics.getDeltaTime() * 5;
+        position.x += velocity.x * deltaTime * 4.5f;
+        position.y += velocity.y * deltaTime * 4.5f;
     }
 
     public void render(SpriteBatch batch) {
-        float scale = 1.5f;
         batch.draw(texture, position.x - (texture.getWidth() * scale) / 2, position.y - (texture.getHeight() * scale) / 2,
                 texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), scale, scale,
                 angle, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
@@ -35,5 +42,7 @@ public class Projectile {
         return position;
     }
 
+    public boolean isCharged() {
+        return isCharged;
+    }
 }
-
