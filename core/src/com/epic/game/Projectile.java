@@ -12,7 +12,6 @@ public class Projectile {
     private Vector2 velocity;
     private float angle;
     private float scale;
-    private boolean isCharged;
 
     public Projectile(Texture texture, Vector2 position, Vector2 velocity) {
         this(texture, position, velocity, 2f, false);
@@ -24,7 +23,6 @@ public class Projectile {
         this.velocity = new Vector2(velocity);
         this.angle = velocity.angleDeg();
         this.scale = scale;
-        this.isCharged = isCharged;
     }
 
     public void update(float deltaTime) {
@@ -40,9 +38,5 @@ public class Projectile {
 
     public Vector2 getPosition() {
         return position;
-    }
-
-    public boolean isCharged() {
-        return isCharged;
     }
 }

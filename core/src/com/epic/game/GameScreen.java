@@ -1,19 +1,20 @@
 package com.epic.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class Game extends ApplicationAdapter {
-
+public class GameScreen extends ScreenAdapter {
+	private Game game;
 	private Texture player;
 	private Texture projectilePlayer;
 	private SpriteBatch batch;
@@ -29,13 +30,11 @@ public class Game extends ApplicationAdapter {
 	private final float WORLD_WIDTH = 5000f, WORLD_HEIGHT = 5000f;
 	// for tracking projectiles, cooldowns, and trail
 	private ArrayList<Projectile> projectiles;
-	private ArrayList<Vector2> trail;
 	private float playerProjectileCooldown = 0f; // set to 0.5 after every shot
 	private float playerProjectileCooldownTime = 0.5f; // time between normal shots
 
-	@Override
-	public void create() {
-
+	public GameScreen(Game game) {
+		this.game = game;
 		// load images (SPRITE MUST BE FACING RIGHT) sprite and rotation not linked otherwise
 		player = new Texture("player.png");
 		projectilePlayer = new Texture("projectilePlayer.png");
@@ -50,11 +49,10 @@ public class Game extends ApplicationAdapter {
 		camera.update();
 
 		projectiles = new ArrayList<>();
-		trail = new ArrayList<>();
 	}
 
 	@Override
-	public void render() {
+	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0, 1); // sets background back to black after input, prevents after image
 
 		userInput(); // handles player inputs
@@ -62,8 +60,6 @@ public class Game extends ApplicationAdapter {
 		// player pos
 		xAxis += velocityX * Gdx.graphics.getDeltaTime();
 		yAxis += velocityY * Gdx.graphics.getDeltaTime();
-
-		updateTrail();
 
 		// reduce speed after w key momentum, value 0.9 and 1 are the difference between insta stop and no friction
 		float friction = 0.99f;
@@ -106,8 +102,6 @@ public class Game extends ApplicationAdapter {
 				iter.remove();
 			}
 		}
-
-		renderTrail();
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin(); // begin rendering images (where created objects should go)
@@ -153,29 +147,29 @@ public class Game extends ApplicationAdapter {
 			playerProjectileCooldown -= deltaTime;
 		}
 
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+		if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.W)) {
 			float acceleration = 975f;
 			velocityX += Math.cos(radianAngle) * acceleration * deltaTime;
 			velocityY += Math.sin(radianAngle) * acceleration * deltaTime;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+		if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.A)) {
 			rotationAngle += 3.5f;
 			if (rotationAngle >= 360) {
 				rotationAngle -= 360;
 			}
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+		if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.S)) {
 			// 0.9 and 1 is the difference between nearly insta stop and very loose brakes, like friction
 			velocityX *= 0.97f;
 			velocityY *= 0.97f;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+		if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.D)) {
 			rotationAngle -= 3.5f;
 			if (rotationAngle < 0) {
 				rotationAngle += 360;
 			}
 		}
-		if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && playerProjectileCooldown <= 0) {
+		if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE) && playerProjectileCooldown <= 0) {
 			// Calculate the tip offset from the center of the sprite
 			float spriteWidth = player.getWidth();
 			float spriteHeight = player.getHeight();
@@ -195,37 +189,8 @@ public class Game extends ApplicationAdapter {
 			projectiles.add(new Projectile(projectilePlayer, position, velocity));
 			playerProjectileCooldown = playerProjectileCooldownTime;
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+		if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
 		}
-	}
-
-	//trail structure
-	private void updateTrail() {
-		if(velocityX != 0 || velocityY != 0) {
-			trail.add(new Vector2(xAxis, yAxis));
-			//trail length
-			float speed = (float) Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-			int maxTrailLength = Math.min(50, (int) (speed * 0.5f));
-
-			//delete outdated trail
-			while(trail.size() > maxTrailLength) {
-				trail.remove(0);
-			}
-		}else {
-			trail.clear();
-		}
-	}
-
-	private void renderTrail() {
-		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-		shapeRenderer.setColor(1, 1, 1, 1);
-
-		// Draw the trail
-		for (Vector2 position : trail) {
-			shapeRenderer.rect(position.x, position.y - 65, 3, 11); // Adjust the size of the trail elements
-		}
-
-		shapeRenderer.end();
 	}
 }
