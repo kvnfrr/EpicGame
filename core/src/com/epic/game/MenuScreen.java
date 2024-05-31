@@ -3,6 +3,7 @@ package com.epic.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +17,7 @@ public class MenuScreen implements com.badlogic.gdx.Screen {
     private Texture exitButton;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
+    private Sound menuSelect;
 
     private int selectedOption = 0; // 0: Play, 1: Exit
 
@@ -26,6 +28,7 @@ public class MenuScreen implements com.badlogic.gdx.Screen {
         exitButton = new Texture("exit_button.png");
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
+        menuSelect = Gdx.audio.newSound(Gdx.files.internal("menuSelectSound.mp3"));
     }
 
     @Override
@@ -57,15 +60,20 @@ public class MenuScreen implements com.badlogic.gdx.Screen {
     private void handleInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.W) || Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
             selectedOption = (selectedOption == 0) ? 1 : 0;
+            menuSelect.play();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S) || Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
             selectedOption = (selectedOption == 1) ? 0 : 1;
+            menuSelect.play();
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             if (selectedOption == 0) {
                 game.setScreen(new GameScreen(game));
+                menuSelect.play();
             } else if (selectedOption == 1) {
                 Gdx.app.exit();
+                menuSelect.play();
+
             }
         }
     }

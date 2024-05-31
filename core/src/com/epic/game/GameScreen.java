@@ -3,6 +3,7 @@ package com.epic.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -33,11 +34,15 @@ public class GameScreen extends ScreenAdapter {
 	private float playerProjectileCooldown = 0f; // set to 0.5 after every shot
 	private float playerProjectileCooldownTime = 0.5f; // time between normal shots
 
+	private Sound projectileSound;
+
 	public GameScreen(Game game) {
 		this.game = game;
 		// load images (SPRITE MUST BE FACING RIGHT) sprite and rotation not linked otherwise
 		player = new Texture("player.png");
 		projectilePlayer = new Texture("projectilePlayer.png");
+
+		projectileSound = Gdx.audio.newSound(Gdx.files.internal("playerProjectileSound.mp3"));
 
 		// instance of sprite batch (used to make character a rectangle p much)
 		batch = new SpriteBatch();
@@ -188,6 +193,8 @@ public class GameScreen extends ScreenAdapter {
 			Vector2 velocity = new Vector2((float) Math.cos(radianAngle) * 600, (float) Math.sin(radianAngle) * 600);
 			projectiles.add(new Projectile(projectilePlayer, position, velocity));
 			playerProjectileCooldown = playerProjectileCooldownTime;
+
+			projectileSound.play();
 		}
 		if (Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.ESCAPE)) {
 			Gdx.app.exit();
